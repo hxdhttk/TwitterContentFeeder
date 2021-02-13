@@ -1,0 +1,5 @@
+﻿{
+	"TempPath": "",
+	"UrlPattern": "https:\\/\\/pbs\\.twimg\\.com\\/media\\/(.+)\\?format=([a-zA-Z]+)",
+	"Proxy": ""
+}
