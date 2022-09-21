@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -32,6 +34,19 @@ namespace TwitterContentFeeder
 
         public static void Main(string[] args)
         {
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                var args = ToastArguments.Parse(toastArgs.Argument);
+
+                var filePath = args.Get("filePath");
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+            };
+
+            AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+            {
+                ToastNotificationManagerCompat.Uninstall();
+            };
+
             _config = GetConfig();
 
             Logger.Start();
@@ -132,6 +147,23 @@ namespace TwitterContentFeeder
                 imageFile.Write(response, 0, response.Length);
                 Logger.Log($"Downloading \"{imgUrl}\" succeeded.");
             }
+
+            ShowToastNotification(imgUrl, filePath);
+        }
+
+        private static void ShowToastNotification(string imgUrl, string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                var toast = new ToastContentBuilder()
+                    .AddArgument("filePath", filePath)
+                    .AddText("The image was successully downloaded from:")
+                    .AddText(imgUrl)
+                    .AddHeroImage(new Uri(filePath))
+                    .AddText("Click to view!");
+
+                toast.Show();
+            }
         }
     }
 
@@ -172,7 +204,7 @@ namespace TwitterContentFeeder
 
         public NotificationForm()
         {
-            PInvoke.SetParent(new HWND(Handle), new HWND(-3));
+            PInvoke.SetParent(new HWND(Handle), new HWND(new IntPtr(-3)));
             PInvoke.AddClipboardFormatListener(new HWND(Handle));
         }
 
