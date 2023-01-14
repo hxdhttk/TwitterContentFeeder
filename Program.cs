@@ -73,7 +73,7 @@ namespace TwitterContentFeeder
             _notificationForm = new NotificationForm();
             _notificationForm.ContentChanged += OnContentChanged;
 
-            Logger.Log("Start notification from...");
+            Logger.Log("Start notification form...");
             Application.Run(_notificationForm);
         }
 
@@ -157,7 +157,7 @@ namespace TwitterContentFeeder
             {
                 var toast = new ToastContentBuilder()
                     .AddArgument("filePath", filePath)
-                    .AddText("The image was successully downloaded from:")
+                    .AddText("The image has been successfully downloaded from:")
                     .AddText(imgUrl)
                     .AddHeroImage(new Uri(filePath))
                     .AddText("Click to view!");
